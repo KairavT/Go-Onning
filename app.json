@@ -8,10 +8,16 @@
     "scheme": "frontend",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "permissions": ["LOCATION", "AUDIO_RECORDING"],
     "ios": {
       "supportsTablet": true,
       "config": {
         "googleMapsApiKey": "process.env.GMAPS_API_KEY"
+      },
+      "infoPlist": {
+        "UIBackgroundModes": ["location", "audio"],
+        "NSLocationWhenInUseUsageDescription": "We use your location to detect nearby matcha shops.",
+        "NSLocationAlwaysUsageDescription": "We use your location to detect nearby matcha shops even in background."
       }
     },
     "android": {
@@ -29,7 +35,12 @@
         }
       },
       "package": "com.JJAKd.matchafinder",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE"
+      ]
     },
     "web": {
       "output": "static",
@@ -47,8 +58,13 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        },
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
+      
     ],
     "experiments": {
       "typedRoutes": true,
