@@ -55,7 +55,7 @@ export default function HomeScreen() {
                 icon="trash"
                 destructive
                 onPress={() => alert('Delete pressed')}
-              />
+              /> 
             </Link.Menu>
           </Link.Menu>
         </Link>
