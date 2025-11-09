@@ -1,33 +1,32 @@
 import { ThemedText } from '@/components/themed-text';
-import getLocationPerms from '@/services/get-location';
+import getLocationPerms from '@/services/get-location-perms';
+import { LOCATION_BG } from '@/tasks/location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import * as TaskManager from 'expo-task-manager';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
-const LOCATION_BG = 'location';
-
-TaskManager.defineTask(LOCATION_BG,
-  async (res: TaskManager.TaskManagerTaskBody<any>) => {
-    if (res.error) return;
-    if (res.data) console.log("Received new locations", res.data.locations);
-  });
-
 export default function HomeScreen() {
-  const [loc, setLoc] = useState<Location.LocationObject | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [loc, setLoc] = useState<Location.LocationObject | null>(null);
 
-  useEffect(() => { (async () => { getLocationPerms(setErr) })() });
+  useEffect(() => {(async () => { getLocationPerms(setErr) })()});
   Location.startLocationUpdatesAsync(LOCATION_BG,
     {
       accuracy: Location.LocationAccuracy.Balanced,
       distanceInterval: 1,
       foregroundService: {
         notificationTitle: "Searching for matcha...",
-        notificationBody: "Searching..."
-      }
+        notificationBody: "Your location is being used in the background"
+      },
+      timeInterval: 1000,
     }
   );
+
+  useEffect(() => {( async () => {
+    const lastLoc = await AsyncStorage.getItem('loc');
+    if (lastLoc) setLoc(JSON.parse(lastLoc));
+  })()});
 
   let text = '...';
   if (err) text = err;
