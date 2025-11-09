@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import getLocationPerms from '@/services/get-location-perms';
-import { LOCATION_BG } from '@/tasks/location';
+import { LOCATION_BG, MATCHA_FETCH } from '@/tasks/location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
@@ -9,11 +10,13 @@ import { StyleSheet } from 'react-native';
 export default function HomeScreen() {
   const [err, setErr] = useState<string | null>(null);
   const [loc, setLoc] = useState<Location.LocationObject | null>(null);
+  const [mat, setMat] = useState<any | null>(null);
 
   useEffect(() => {(async () => { getLocationPerms(setErr) })()});
+
   Location.startLocationUpdatesAsync(LOCATION_BG,
     {
-      accuracy: Location.LocationAccuracy.Balanced,
+      accuracy: Location.LocationAccuracy.High,
       distanceInterval: 1,
       foregroundService: {
         notificationTitle: "Searching for matcha...",
@@ -23,9 +26,21 @@ export default function HomeScreen() {
     }
   );
 
+  Location.startLocationUpdatesAsync(MATCHA_FETCH,
+    {
+      accuracy: Location.LocationAccuracy.Balanced,
+      distanceInterval: 100,
+    }
+  );
+
   useEffect(() => {( async () => {
     const lastLoc = await AsyncStorage.getItem('loc');
     if (lastLoc) setLoc(JSON.parse(lastLoc));
+  })()});
+
+  useEffect(() => {( async () => {
+    const lastMat = await AsyncStorage.getItem('matcha');
+    if (lastMat) setMat(JSON.parse(lastMat));
   })()});
 
   let text = '...';
@@ -33,8 +48,16 @@ export default function HomeScreen() {
   else if (text != null) text = `${loc?.coords.latitude}, ${loc?.coords.longitude}`
   else text = 'Loading...';
 
+  let text2 = '...';
+  if (err) text2 = err;
+  else if (text2 != null) text2 = JSON.stringify(mat);
+  else text2 = 'Loading...';
+
   return (
-    <ThemedText>{text}</ThemedText>
+    <ThemedView>
+      <ThemedText>{text}</ThemedText>
+      <ThemedText>{text2}</ThemedText>
+    </ThemedView>
   )
 }
 
