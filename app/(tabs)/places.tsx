@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import getLocationPerms from '@/services/get-location-perms';
+import { GEOFENCING } from '@/tasks/geofencing';
 import { LOCATION_BG, MATCHA_FETCH } from '@/tasks/location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
@@ -34,14 +35,20 @@ export default function HomeScreen() {
       deferredUpdatesDistance: 1,
     });
 
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+
     const isRunning1 = await Location.hasStartedLocationUpdatesAsync(LOCATION_BG);
     const isRunning2 = await Location.hasStartedLocationUpdatesAsync(MATCHA_FETCH);
-    console.log('PRECISE_TRACKING running:', isRunning1);
-    console.log('COARSE_TRACKING running:', isRunning2);
+    // const isRunning3 = await Location.hasStartedGeofencingAsync(GEOFENCING);
+    console.log('LOCATION_BG running:', isRunning1);
+    console.log('MATCHA_FETCH running:', isRunning2);
+    // console.log('GEOFENCING running:', isRunning3);
 
     return async () => {
       await Location.stopLocationUpdatesAsync(LOCATION_BG);
       await Location.stopLocationUpdatesAsync(MATCHA_FETCH);
+        await Location.stopLocationUpdatesAsync(GEOFENCING);
     }})()}, []);
 
 
@@ -58,9 +65,7 @@ export default function HomeScreen() {
 
   let text2 = 'Loading...';
   if (err) text2 = err;
-  if (mat) {
-    text2 = mat.map((x: any) => `store: ${x.lat}, ${x.lng}`).join('\n');
-  }
+  else if (mat) text2 = mat.map((x: any) => `store: ${x.lat}, ${x.lng}`).join('\n');
 
   return (
     <ThemedView>

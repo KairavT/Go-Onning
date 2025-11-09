@@ -40,12 +40,8 @@ async function getCoords(places: string[] | null) {
     for (let place of places) {
       const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${place}&key=${process.env.EXPO_PUBLIC_GMAPS_API_KEY}`);
       const body = await res.json();
-      if (body.status == 'OK') {
-        console.log(body.results);
-        if (body.results[0].geometry) {
-          coords.push(body.results[0].geometry.location);
-        }
-      }
+      if (body.status == 'OK' && body.results[0].geometry)
+        coords.push(body.results[0].geometry.location);
     }
   }
   console.log(coords);
