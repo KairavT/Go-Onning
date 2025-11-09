@@ -35,15 +35,21 @@ export default async function fetchMatchaStores(loc: Location.LocationObject | n
 }
 
 async function getCoords(places: string[] | null) {
-  const coords = [];
+  const stores = [];
   if (places) {
     for (let place of places) {
       const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${place}&key=${process.env.EXPO_PUBLIC_GMAPS_API_KEY}`);
       const body = await res.json();
-      if (body.status == 'OK' && body.results[0].geometry)
-        coords.push(body.results[0].geometry.location);
+      if (body.status == 'OK' && body.results[0].geometry) {
+        // Return in format expected by audioService and geofencing
+        stores.push({
+          geometry: {
+            location: body.results[0].geometry.location
+          }
+        });
+      }
     }
   }
-  console.log(coords);
-  return coords;
+  console.log('Matcha stores with coordinates:', stores);
+  return stores;
 }

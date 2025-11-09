@@ -1,3 +1,4 @@
+import { audioService } from '@/services/audioService';
 import fetchMatchaStores from '@/services/fetch-matcha-stores';
 import coordsToLocReg from '@/services/geofence';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,7 +15,19 @@ TaskManager.defineTask(LOCATION_BG,
     const loc = res.data.locations[0];
     if (!loc) return;
     await AsyncStorage.setItem('loc', JSON.stringify(loc));
-    console.log(loc);
+    
+    // Update audio volume based on proximity to matcha stores
+    try {
+      const cachedMatcha = await AsyncStorage.getItem('matcha');
+      if (cachedMatcha && audioService.getIsPlaying()) {
+        const matchaStores = JSON.parse(cachedMatcha);
+        if (Array.isArray(matchaStores) && matchaStores.length > 0) {
+          await audioService.updateVolumeBasedOnProximity(loc, matchaStores);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating audio volume:', error);
+    }
   }
 );
 
