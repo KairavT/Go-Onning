@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
  
 export default async function fetchMatchaStores(loc: Location.LocationObject | null) {
-  console.log(loc);
+  console.log(`gfsij ${loc}`);
   if (loc) {
     const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
       method: 'POST',
@@ -23,7 +23,7 @@ export default async function fetchMatchaStores(loc: Location.LocationObject | n
       }),
       headers: {
         'Content-Type': 'application/json',
-        'X-Goog-Api-Key': `${process.env.GMAPS_API_KEY}`,
+        'X-Goog-Api-Key': `${process.env.EXPO_PUBLIC_GMAPS_API_KEY}`,
         'X-Goog-FieldMask': 'places.id,places.name'
       }
     });

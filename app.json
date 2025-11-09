@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey":  "process.env.GMAPS_API_KEY"
+        "googleMapsApiKey": "process.env.GMAPS_API_KEY"
       }
     },
     "android": {
@@ -27,7 +27,15 @@
         }
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
+      ],
+      "package": "com.elektr1x.myapp"
     },
     "web": {
       "output": "static",
@@ -59,7 +67,8 @@
         {
           "android": {
             "enableProguardInReleaseBuilds": false,
-            "extraProguardRules": "-keep class expo.modules.location.** { *; }"
+            "extraProguardRules": "-keep class expo.modules.location.** { *; }",
+            "enableMinifyInReleaseBuilds": false
           }
         }
       ]
@@ -67,6 +76,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6b8bfa52-0a4e-487e-84db-bddd922a3878"
+      }
     }
   }
 }

@@ -1,9 +1,10 @@
 import * as Location from 'expo-location';
 import { Dispatch } from 'react';
+import { PermissionsAndroid } from 'react-native';
 
 export default async function getLocationPerms(setErr: Dispatch<any>) {
-  let statusFg = (await Location.requestForegroundPermissionsAsync()).status;
-  if (statusFg != 'granted') {
+  let status = (await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION));
+  if (status != 'granted') {
     setErr('Foreground location access denied');
     return;
   }

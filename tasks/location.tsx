@@ -17,6 +17,7 @@ TaskManager.defineTask(LOCATION_BG,
 
 TaskManager.defineTask(MATCHA_FETCH,
   async (res: TaskManager.TaskManagerTaskBody<any>) => {
+    console.log('fdufndinfsidm');
     if (res.error) return;
     const loc = res.data.locations[0];
     if (!loc) return;

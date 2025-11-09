@@ -25,20 +25,25 @@ export default function HomeScreen() {
       timeInterval: 1000,
     });
 
-    return async () => {
-      await Location.stopLocationUpdatesAsync(LOCATION_BG);
-    }})()});
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-
-  useEffect(() => {(async () => {
     await Location.startLocationUpdatesAsync(MATCHA_FETCH, {
       accuracy: Location.LocationAccuracy.Balanced,
-      distanceInterval: 100,
+      distanceInterval: 10,
+      deferredUpdatesInterval: 1000,
+      deferredUpdatesDistance: 10,
     });
 
+    const isRunning1 = await Location.hasStartedLocationUpdatesAsync(LOCATION_BG);
+    const isRunning2 = await Location.hasStartedLocationUpdatesAsync(MATCHA_FETCH);
+    console.log('PRECISE_TRACKING running:', isRunning1);
+    console.log('COARSE_TRACKING running:', isRunning2);
+
     return async () => {
+      await Location.stopLocationUpdatesAsync(LOCATION_BG);
       await Location.stopLocationUpdatesAsync(MATCHA_FETCH);
-  }})()});
+    }})()}, []);
+
 
   useEffect(() => {( async () => {
     const lastLoc = await AsyncStorage.getItem('loc');
@@ -47,16 +52,13 @@ export default function HomeScreen() {
     if (lastMat) setMat(JSON.parse(lastMat));
   })()});
 
-
-  let text = '...';
+  let text = 'Loading...';
   if (err) text = err;
-  else if (text != null) text = `${loc?.coords.latitude}, ${loc?.coords.longitude}`
-  else text = 'Loading...';
+  else if (loc) text = `${loc?.coords.latitude}, ${loc?.coords.longitude}`
 
-  let text2 = '...';
+  let text2 = 'Loading...';
   if (err) text2 = err;
-  else if (text2 != null) text2 = JSON.stringify(mat);
-  else text2 = 'Loading...';
+  else if (mat) text2 = mat.places.map((x: any) => x.id).join('\n');
 
   return (
     <ThemedView>
